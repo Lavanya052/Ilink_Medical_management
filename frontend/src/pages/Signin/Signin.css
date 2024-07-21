@@ -1,0 +1,173 @@
+
+#signin-page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  gap:100px;
+  background-image: linear-gradient(to left bottom, #d2eefc, #cfeefd, #ccedfe, #c9edfe, #c6edff);
+}
+
+
+.account-type {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="email"]{
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    justify-items: center;
+}
+
+.custom-button{
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: #0071e9;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    
+}
+
+.custom-button:hover{
+    background-color: #058efe;
+}
+
+.welcome-message {
+    margin-top: 5px;
+    font-size: 19px;
+    color: #868788;
+    text-align: center;
+}
+
+  .leftside {
+    width: 50%;
+    margin-left: 50px;
+  }
+  
+  .leftside img {
+    width: 100%;
+  }
+  
+  
+  .rightside {
+    padding: 2rem;
+    align-items: center;
+    text-align: center;
+    width: 35%;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  }
+  
+  .Profileimg {
+    margin: auto;
+    width: 26%;
+    margin-top: 20px;
+  }
+  
+  .Profileimg img {
+    width: 5rem;
+    border-radius: 5rem;
+  }
+  
+  .radiobutton {
+    width: 33%;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+
+  .rightside button {
+    width: 40%;
+    height: 2.rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: bolder;
+    background-color: rgba(28, 100, 243, 0.919);
+    border: none;
+    margin-top: 8px;
+    margin-left: 40px;
+  }
+
+  .signin-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .signin-actions .button {
+    flex: 1;
+  }
+  
+  .signin-actions .forget-password {
+    margin-left: 10px;
+  }
+  
+  @media only screen and (max-width: 1400px) {
+    #signin-page  {
+      gap: 5rem;
+    }
+  
+    .leftside {
+      width: 70%;
+    }
+    .rightside {
+      width: 70%;
+     
+    }
+  }
+  @media only screen and (max-width: 1024px) {
+    #signin-page  {
+      gap: 0rem;
+    }
+    .leftside {
+      display: none;
+    }
+    .rightside {
+      width: 50%;
+     
+    }
+  }
+  
+  @media screen and (max-width: 770px) {
+    #signin-page {
+      gap: 0rem;
+    }
+    .leftside {
+      display: none;
+    }
+    .rightside {
+      width: 65%;
+      
+    }
+  }
+  
+  @media only screen and (max-width: 550px) {
+    
+    .rightside {
+      width: 80%;
+    }
+    .rightside button{
+      margin-left: 20px;
+    }
+  }
+  
+ 

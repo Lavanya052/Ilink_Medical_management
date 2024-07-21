@@ -1,0 +1,45 @@
+/* DoctorAvailability.css */
+.rbc-current-time-indicator {
+    display: none !important;
+  }
+ 
+
+
+
+/* Hide the button with text "Today" */
+.rbc-toolbar button:contains("Today") {
+  display: none;
+}
+
+/* Hide the button with text "Next" */
+.rbc-toolbar button:contains("Next") {
+  display: none;
+}
+
+/* Hide the button with text "Back" */
+.rbc-toolbar button:contains("Back") {
+  display: none;
+}
+
+
+
+.rbc-toolbar {
+  display: flex;
+  justify-content: center;
+  font-size:18px;
+}
+.rbc-btn-group {
+  display: flex;
+  margin-right:30px;
+  margin-top:10px;
+}
+
+.rbc-btn-group button {
+  background-color: transparent;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.rbc-btn-group-label {
+  font-size:30px;
+}

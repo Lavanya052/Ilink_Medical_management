@@ -1,0 +1,20 @@
+.search-container{
+    max-width: 70vw;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+
+}
+
+.search-container h2{
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+@media screen and (min-width:800px){
+    .search-container{
+        width: 500px;;
+    }
+}

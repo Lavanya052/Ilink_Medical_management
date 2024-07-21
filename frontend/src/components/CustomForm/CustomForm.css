@@ -1,0 +1,46 @@
+.search-field-container {
+    display: flex;
+    position: relative;
+    width: 90%;
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.clear-icon,
+.search-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px; /* Adjust position as needed */
+    cursor: pointer;
+    color: #000000; /* Example color */
+}
+
+.clear-icon:hover,
+.search-icon:hover {
+    color: #555; /* Example color on hover */
+}
+
+
+
+.input-group-text {
+    display: flex;
+    width: 100%;
+    position: relative;
+  }
+  
+  .icon {
+    position: absolute;
+    right: 10px; 
+    cursor: pointer;
+    color: #000000; 
+    font-size: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  
+

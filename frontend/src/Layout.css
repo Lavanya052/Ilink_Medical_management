@@ -1,0 +1,32 @@
+.layout {
+  display: flex;
+  height: 100vh; 
+}
+
+.sidebar {
+  width: 200px;
+  position: fixed;
+  overflow-y: auto;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color:	#f3f4f6;
+}
+
+
+.outlet {
+  flex: 1; 
+  overflow-y: auto;
+}
+
+
+.no-header-footer .outlet {
+  padding: 0;
+  margin-top: 0;
+  margin-left: 0;
+}
+

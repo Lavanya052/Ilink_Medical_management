@@ -1,0 +1,24 @@
+.container {
+  margin-top: 60px;
+  padding: 15px;
+  overflow-y: auto;
+  height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+
+@media screen and (max-width: 768px) {
+  .container {
+    margin-left: 0;
+    margin-top: 80px; 
+    height: auto;  
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .container {
+    margin-left: 0;
+    margin-top:80px; 
+    height: auto; ; 
+  }
+}

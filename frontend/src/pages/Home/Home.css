@@ -1,0 +1,204 @@
+/* Home.css */
+.home-container {
+    text-align: center;
+}
+
+.image-container {
+    position: relative;
+    text-align: center;
+    padding-top: 21%; /* 16:9 aspect ratio */
+}
+
+.image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.overlay-text .slogan {
+    font-size: 40px;
+    width: 50%;
+    margin-bottom: 20px;
+    border-radius: 3%;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 10px;
+    text-align: center;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.search-bar input {
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+    width: 500px;
+    max-width: 600px; 
+    margin-right: 20px;
+}
+
+.search-bar button {
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+.search-bar button img {
+    width: 20px;
+    height: 20px;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.feature {
+    margin: 0 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.feature h3 {
+    margin-bottom: 10px;
+}
+
+/* Input Error */
+.input-error {
+    border: 2px solid red;
+}
+
+/* Media Queries */
+@media screen and (max-width: 1200px) {
+    .overview-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    .overview-box,
+    .booking-box {
+        width: 100%;
+        max-width: 400px; 
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .image-container {
+        padding-top: 25%; 
+    }
+
+    .overlay-text .slogan {
+        font-size: 30px;
+        padding: 8px;
+        width: 70%;
+    }
+
+    .search-bar input {
+        font-size: 15px;
+        padding: 15px;
+        width: 400px;
+    }
+
+    .search-bar button {
+        padding: 15px;
+        font-size: 15px;
+    }
+
+    .search-bar button img {
+        width: 15px;
+        height: 15px;
+    }
+    .overview-box,
+    .booking-box {
+        margin-left: 120px;
+        max-width: 200px;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .image-container {
+        padding-top: 35%; 
+    }
+
+    .overlay-text .slogan {
+        font-size: 30px;
+        width: 70%;
+    }
+
+    .search-bar input {
+        font-size: 15px;
+        padding: 15px;
+        width: 300px;
+    }
+
+    .search-bar button {
+        font-size: 15px;
+    }
+
+    .search-bar button img {
+        width: 10px;
+        height: 10px;
+    }
+
+    .overview-box,
+    .booking-box {
+        margin-left: 50px;
+        max-width: 400px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .image-container {
+        padding-top: 45%; 
+    }
+
+    .overlay-text .slogan {
+        font-size: 20px;
+        width: 70%;
+    }
+
+    .search-bar input {
+        font-size: 15px;
+        padding: 15px;
+        width: 300px;
+    }
+
+    .search-bar button {
+        font-size: 15px;
+    }
+
+    .search-bar button img {
+        width: 10px;
+        height: 10px;
+    }
+
+    .overview-box,
+    .booking-box {
+        margin-left: 25px;
+        max-width: 160px; 
+    }
+}

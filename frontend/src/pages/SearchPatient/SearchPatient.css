@@ -1,0 +1,83 @@
+/* Container styling */
+.searchpatient-container {
+    margin-left: 20px;
+    text-align: left;
+    margin-bottom: 30px;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.searchpatient-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.dropdown-container {
+    min-width: 420px;
+    margin-left: 20px;
+}
+
+.patient-card .MuiTypography-root {
+    margin-bottom: 10px;
+}
+
+.update-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.update-container h3 {
+    margin-bottom: 20px;
+}
+
+.update-container .MuiTextField-root {
+    margin: 10px 0;
+    width: 100%;
+}
+
+.update-container .MuiButton-root {
+    margin-top: 20px;
+}
+
+.dropdown-container {
+    min-width: 420px;
+    margin-left: 20px;
+}
+
+.justify-left {
+    justify-content: flex-start !important;
+}
+.patients-grid {
+    margin-top: 30px;
+    display: flex;
+    justify-content: left; 
+}
+
+.patient-card {
+    padding: 20px;
+    text-align: left;
+    margin: 0 auto; 
+    justify-content: left;
+}
+.doctor-image {
+    width: 100px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    object-fit: cover; /* Cover the container while maintaining aspect ratio */
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+@media screen and (min-width: 800px) {
+    .searchpatient-container {
+        width: 500px;
+    }
+}
+
+
+
+

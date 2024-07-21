@@ -1,0 +1,13 @@
+.about-container{
+    width: 90vw;
+    margin: auto;
+    padding: 20px;
+}
+
+
+@media screen and (min-width:800px){
+    .about-container{
+        width: 800px;
+        font-size: 25px;
+    }
+}
