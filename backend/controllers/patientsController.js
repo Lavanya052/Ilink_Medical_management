@@ -379,5 +379,35 @@ fetchPatients: async (req, res, next) => {
     }
 },
 
+// Add this method to patientsController
+getPatientDetails: async (req, res, next) => {
+    try {
+        const { id } = req.query; 
+        // console.log(id)
+        const db = await getDatabase();
+
+        // Find the patient by ID
+        const patient = await db.collection("patients").findOne({ id: id }, {
+            projection: { _id: 0, password: 0 } // Exclude sensitive fields
+        });
+
+        if (!patient) {
+            return returnStatus(res, 404, true, "Patient not found");
+        }
+
+        return returnStatus(res, 200, false, "Patient details retrieved successfully", {
+            patient: patient,
+        });
+    } catch (err) {
+        console.error(err);
+        return returnStatus(res, 500, true, "Internal server error");
+    } finally {
+        if (client) {
+            await client.close();
+        }
+    }
+},
+
+
 };
 module.exports = patientsController; 

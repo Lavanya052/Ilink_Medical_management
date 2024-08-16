@@ -23,7 +23,10 @@ import { store } from './redux/store'
 import ResetPassword from './pages/ResetPassword/ResetPassword'
 import AddAvailability from './pages/AddAvailability/AddAvailability'
 import DoctorAvailability from './pages/DoctorAvailability/DoctorAvailability'
-
+import Appointments from './pages/Appointments/Appointments'
+import DoctorAppointments from './pages/DoctorAppointments/DoctorAppointments'
+import MyPatients from './pages/MyPatients/MyPatients'
+import EditPatientD from './pages/EditPatientD/EditPatientD'
 
 const router =createBrowserRouter([
   {
@@ -97,6 +100,22 @@ const router =createBrowserRouter([
       {
         path:"/create-schedule",
         element:<DoctorAvailability/>
+      },
+      {
+        path:"/appointments",
+        element:<Appointments/>
+      },
+      {
+        path:"/doctorappointments",
+        element:<DoctorAppointments/>
+      },
+      {
+        path:"/mypatients",
+        element:<MyPatients/>
+      },
+      {
+        path:"/editpatientdetails",
+        element:<EditPatientD/>
       },
     ],
   },

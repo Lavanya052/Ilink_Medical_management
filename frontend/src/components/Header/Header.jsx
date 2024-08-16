@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   IconButton, Typography, Menu, MenuItem, TextField, Box, Badge, Avatar, Drawer, List, ListItem,
-  ListItemText, ListItemIcon, Divider, InputAdornment, Button,useMediaQuery, useTheme
+  ListItemText, ListItemIcon, Divider, InputAdornment, Button, useMediaQuery, useTheme
 } from '@mui/material';
 import { Search as SearchIcon, Notifications as NotificationsIcon, Add as AddIcon } from '@mui/icons-material';
 import { toast } from 'react-toastify';
@@ -42,6 +42,7 @@ const Header = () => {
             username: 'admin',
             email: res.email,
             admin: res.admin,
+            person: res.person,
             tokenexpiration: jwtDecode(token).exp,
           }));
         }
@@ -54,6 +55,7 @@ const Header = () => {
             firstname: res.firstName,
             lastname: res.lastName,
             doctor: res.doctor,
+            person: res.person,
             tokenexpiration: jwtDecode(token).exp,
           }));
           const dataUrl = `data:image/jpeg;base64,${res.image}`;
@@ -141,77 +143,78 @@ const Header = () => {
               </IconButton>
             </InputAdornment>
           ),
-          style: { paddingLeft: '0'}
+          style: { paddingLeft: '0' }
         }}
         variant="standard"
         size="small"
         sx={{
-          backgroundColor: '#e2e8f0',
+          backgroundColor: 'white',
           borderRadius: '10px',
+          marginLeft:"10px",
           '& .MuiInputBase-input': {
             borderRadius: '10px',
-            backgroundColor: '#e2e8f0',
+            backgroundColor: 'white',
             padding: '10px 15px',
           }
         }}
       />
- <Box className="flex items-center">
-    
- {userSelector.doctor && !isSmallScreen && (
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          sx={{ 
-            color: 'black',
-            marginLeft:'1',
-            borderRadius: '10px', 
-            backgroundColor: '#e2e8f0', 
-            '&:hover': {
-              backgroundColor: '#bae6fd', // Darker blue on hover
-            },
-          }}
-          onClick={() => navigate('/create-schedule')}
-        >
-          Create Schedule
-        </Button>
-      )}
-      {/* Show only the plus icon on small screens */}
-      {userSelector.doctor && isSmallScreen && (
+      <Box className="flex items-center">
+
+        {userSelector.doctor && !isSmallScreen && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{
+              color: 'black',
+              marginLeft: '1',
+              borderRadius: '10px',
+              backgroundColor: '#e2e8f0',
+              '&:hover': {
+                backgroundColor: '#bae6fd', // Darker blue on hover
+              },
+            }}
+            onClick={() => navigate('/create-schedule')}
+          >
+            Create Schedule
+          </Button>
+        )}
+        {/* Show only the plus icon on small screens */}
+        {userSelector.doctor && isSmallScreen && (
+          <IconButton
+            sx={{
+              color: 'black',
+              backgroundColor: '#e2e8f0', // Blue background
+              borderRadius: '50%',
+              '&:hover': {
+                backgroundColor: '#bae6fd', // Darker blue on hover
+              },
+              marginLeft: '1',
+            }}
+            onClick={() => navigate('/create-schedule')}
+          >
+            <AddIcon />
+          </IconButton>
+        )}
         <IconButton
           sx={{
-            color: 'black',
-            backgroundColor: '#e2e8f0', // Blue background
+            color: 'white',
             borderRadius: '50%',
-            '&:hover': {
-              backgroundColor: '#bae6fd', // Darker blue on hover
-            },
-            marginLeft:'1',
+            marginLeft: '3',
+            // Hide on small screens
           }}
-          onClick={() => navigate('/create-schedule')}
+          onClick={handleNotificationClick}
         >
-          <AddIcon />
+          <Badge badgeContent={notifications.length} color="error">
+            <NotificationsIcon />
+          </Badge>
         </IconButton>
-      )}
-      <IconButton
-        sx={{
-          color: 'white',
-          borderRadius: '50%',
-          marginLeft:'3',
-         // Hide on small screens
-        }}
-        onClick={handleNotificationClick}
-      >
-        <Badge badgeContent={notifications.length} color="error">
-          <NotificationsIcon />
-        </Badge>
-      </IconButton>
 
-      <Profile sx={{ display: isSmallScreen ? 'none' : 'inline-flex' }} />
-      
-      
-      
-    </Box>
+        <Profile sx={{ display: isSmallScreen ? 'none' : 'inline-flex' }} />
+
+
+
+      </Box>
       {userSelector.username && (
         <Drawer anchor="right" open={location.pathname === '/profile'} onClose={toggleProfile}>
           <Box sx={{ width: 250 }} role="presentation">

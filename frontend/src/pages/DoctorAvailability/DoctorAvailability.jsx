@@ -169,10 +169,11 @@ const DoctorAvailability = () => {
         setSelection({ start: null, end: null });
         setSelectionEvent(null);
     };
-    return (
+    return (<>
+     <h1 className="text-3xl font-bold text-blue-600 ml-8 mt-4 ">Set Availability</h1>
         <div className="flex min-h-screen p-4">
             <div className="flex-none w-1/3 p-4">
-                <h2 className="text-blue-600 text-bold text-2xl mb-4 font-semibold justify-left">Select Date</h2>
+                <h2 className="text-blue-600 text-bold text-2xl mb-4 font-semibold">Select Date</h2>
                 <Calendar
                     onChange={handleDateChange}
                     value={selectedDate}
@@ -229,6 +230,7 @@ const DoctorAvailability = () => {
             </div>
             <ToastContainer />
         </div>
+        </>
     );
 };
 export default DoctorAvailability;

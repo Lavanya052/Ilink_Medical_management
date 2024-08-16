@@ -1,23 +1,15 @@
 import { useState, useEffect } from "react";
-import "./SearchPatient.css";
 import { useNavigate } from 'react-router-dom';
-import CustomForm from "../../components/CustomForm/CustomForm";
-import Button from "../../components/Button/Button";
-import { makeGETrequest, makePOSTrequest } from "../../utils/api";
 import { useSelector } from "react-redux";
-import {
-    Grid,
-    TextField,
-    Paper,
-    Typography,
-    Button as MuiButton,
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel
-} from "@mui/material";
+import { Grid, TextField, Button, Box, InputAdornment, FormControl, Select, MenuItem, InputLabel, Typography, Paper } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { ToastContainer, toast } from "react-toastify";
+import CustomForm from "../../components/CustomForm/CustomForm";
+import { makeGETrequest, makePOSTrequest } from "../../utils/api";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from 'react-router-dom';
+
+
 const SearchPatient = () => {
     const [patients, setPatients] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -30,15 +22,15 @@ const SearchPatient = () => {
     const [patientsPerPage, setPatientsPerPage] = useState(6);
     const navigate = useNavigate();
     const userSelector = useSelector((state) => state.user);
+
     useEffect(() => {
         async function fetchAllPatients() {
             try {
                 const res = await makeGETrequest("http://localhost:5000/patients/allpatients");
                 if (res.patients) {
-
                     const patientWithImages = res.patients.map((patient) => ({
                         ...patient,
-                         imageUrl: `data:${patient.image.contentType};base64,${patient.image.data}`
+                        imageUrl: `data:${patient.image.contentType};base64,${patient.image.data}`
                     }));
                     setPatients(patientWithImages);
                     setFilteredPatients(patientWithImages);
@@ -57,7 +49,6 @@ const SearchPatient = () => {
         if (searchTerm.trim() !== "") {
             submitSearch();
         } else {
-
             setFilteredPatients(patients);
         }
     }, [searchTerm, patients]);
@@ -69,71 +60,7 @@ const SearchPatient = () => {
             (patient.username && patient.username.toLowerCase().includes(searchTerm.toLowerCase()))
         );
         setFilteredPatients(filtered);
-        if (filtered.length === 0) {
-            //toast.error("No Ptient found");
-        } else {
-            //toast.success("Patient found");
-        }
     };
-    async function updateContact(e) {
-        e.preventDefault();
-
-        if (!/\S+@\S+\.\S+/.test(updateEmail)) {
-            toast.error("Invalid email address");
-            return;
-        }
-        if (!/^[0-9-+]+$/.test(updatePhone)) {
-            toast.error("Invalid phone number");
-            return;
-        }
-
-        try {
-            const res = await makePOSTrequest("http://localhost:5000/patients/updatepatient", {
-                id: selectedPatientId,
-                email: updateEmail,
-                phone: updatePhone
-            },
-                localStorage.getItem("token"));
-            if (res.status === 201) {
-                setUpdateEmail("");
-                setUpdatePhone("");
-                setSelectedPatientId(null);
-                const updatedPatient = JSON.parse(res.patient);
-                setPatients(patients.map(pat => pat.id === selectedPatientId ? updatedPatient : pat));
-                // toast.success(res.message);
-            } else {
-                // toast.error(res.message);
-            }
-        } catch (error) {
-            console.error("Error updating contact:", error);
-            toast.error("Failed to update contact information");
-        }
-    }
-    async function submitMedicalRecord(e) {
-        e.preventDefault();
-
-        try {
-            const res = await makePOSTrequest("http://localhost:5000/patients/addmedicalrecord", {
-                medicalRecord: medicalRecord,
-                id: selectedPatientId
-            },
-                localStorage.getItem("token"));
-            if (res.status === 201) {
-                setMedicalRecord("");
-                const updatedPatient = JSON.parse(res.patient);
-                setPatients(patients.map(pat => pat.id === selectedPatientId ? updatedPatient : pat));
-                toast.success(res.message);
-            } else {
-                toast.error(res.message);
-            }
-        } catch (error) {
-            console.error("Error adding medical record:", error);
-            toast.error("Failed to add medical record");
-        }
-    }
-
-
-
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -141,15 +68,18 @@ const SearchPatient = () => {
 
     const handlePatientsPerPageChange = (event) => {
         setPatientsPerPage(event.target.value);
-        setCurrentPage(1); // Reset to the first page when changing doctors per page
+        setCurrentPage(1); // Reset to the first page when changing patients per page
     };
+
     const handlePreviousPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
+
     const handleNextPage = () => {
         const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
+
     const indexOfLastPatient = currentPage * patientsPerPage;
     const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
     const currentPatients = filteredPatients.slice(indexOfFirstPatient, indexOfLastPatient);
@@ -157,62 +87,101 @@ const SearchPatient = () => {
 
     return (
         <>
+            <nav className="flex py-3 px-5 bg-gray-100 rounded-md w-full">
+        <ol className="list-reset flex text-grey-dark">
+        
+        <li className="flex text-lg items-center">
+          <Link to="/adminpanel" className="text-blue-600 hover:text-blue-800">
+            Home
+          </Link>
+        </li>
+        <li className="flex text-lg  items-center mx-2 text-gray-500">
+          &gt;
+        </li>
+        <li className="flex text-lg  items-center">
+          <Link to="/searchpatient" className="text-blue-600 hover:text-blue-800">
+            Search Patient
+          </Link>
+        </li>
+        </ol>
+        </nav>
+        <Box sx={{ padding: 4 }}>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={4}>
+                    <TextField
+                        label="Search"
+                        variant="outlined"
+                        fullWidth
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search for Patients"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault(); // Prevent form submission
+                                submitSearch();
+                            }
+                        }}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{
+                            backgroundColor: 'white',
+                            '& .MuiOutlinedInput-root': {
+                                backgroundColor: 'white',
+                            },
+                        }}
+                    />
+                </Grid>
 
-            <div className="grid grid-cols-3 gap-4 mt-5 mb-10">
 
-                <div className="search-bar flex justify-center items-center ">
-                    <CustomForm>
-                        <CustomForm.Search
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search for Patients"
-                            onKeyPress={(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault(); // Prevent form submission
-                                    submitSearch();
-                                }
-                            }}
-                        />
-                    </CustomForm>
-                </div>
+                {/* Pagination Controls */}
+                <Grid item xs={12} sm={4} className="pagination-controls flex justify-center items-center">
+                    <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+                        <Button
+                            onClick={handlePreviousPage}
+                            disabled={currentPage === 1}
+                            sx={{ px: 2, py: 1, backgroundColor: 'blue.300', color: 'gray.500', borderRadius: 1, '&:disabled': { opacity: 0.5 } }}
+                        >
+                            &lt; Previous
+                        </Button>
+                        <span style={{ margin: '0 16px' }}>
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <Button
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                            sx={{ px: 2, py: 1, backgroundColor: 'blue.300', color: 'gray.500', borderRadius: 1, '&:disabled': { opacity: 0.5 } }}
+                        >
+                            Next &gt;
+                        </Button>
+                    </Box>
+                </Grid>
 
-                <div className="pagination-controls flex justify-center items-center">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-                    >
-                        &lt; Previous
-                    </button>
-                    <span className="mx-4">
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-                    >
-                        Next &gt;
-                    </button>
-                </div>
-
-                <div className="patients-per-page ">
-                    <FormControl variant="outlined" style={{ minWidth: 120 }}>
-                        <InputLabel>Patients per page</InputLabel>
+                {/* Per Page */}
+                <Grid item xs={12} sm={4} className="flex justify-end w-full">
+                    <Box className="flex items-center justify-end w-full">
+                        <Typography variant="body1" component="label" className="px-4">
+                            Patients Per Page
+                        </Typography>
+                    </Box>
+                    <FormControl variant="outlined" className="w-32">
                         <Select
                             value={patientsPerPage}
-                            onChange={(e) => handlePatientsPerPageChange(e)}
-                            label="Patients per page"
+                            onChange={handlePatientsPerPageChange}
                         >
                             <MenuItem value={6}>6</MenuItem>
                             <MenuItem value={12}>12</MenuItem>
                             <MenuItem value={18}>18</MenuItem>
                         </Select>
                     </FormControl>
-                </div>
+                </Grid>
+            </Grid>
 
-            </div>
-            <div className="pr-5 pl-5">
+            <div className="mt-10">
                 {searchTerm && filteredPatients.length > -1 && (
                     <Typography variant="h6" style={{ margin: "20px 0" }}>
                         {filteredPatients.length} {filteredPatients.length === 1 ? "Patient" : "Patients"} Found
@@ -221,95 +190,162 @@ const SearchPatient = () => {
                 {currentPatients.length > 0 && (
                     <Grid container spacing={3} className="patients-grid">
                         {currentPatients.map((patient) => (
-                            <Grid item xs={12} sm={6} md={4} key={patient.id}>
-                                <Paper className="patient-card" elevation={3}>
-                                {patient.imageUrl && (
-                                    <img
-                                        src={patient.imageUrl}
-                                        alt={`${patient.firstName}'s profile`}
-                                        className="doctor-image"
-                                    />
-                                )}
-                                    <Typography variant="h6">Patient ID: {patient.id}</Typography>
-                                    {/* <Typography variant="body1"><strong>Name:</strong> {capitalizeFirstLetter(patient.username)}</Typography> */}
-                                    <Typography variant="body1"><strong>Email:</strong> {patient.email}</Typography>
-                                    {userSelector.doctor && (
-                                        <Button
-                                            value={selectedPatientId === patient.id ? "Close" : "Add Record"}
-                                            onClick={() => {
-                                                setSelectedPatientId(selectedPatientId === patient.id ? null : patient.id);
-                                                setMedicalRecord("");
-                                            }}
-                                        />
-                                    )}
-                                    {userSelector.admin && (<>
-                                        <Button
-                                            value={selectedPatientId === patient.id ? "Close" : "Edit"}
-                                            onClick={() => {
-                                                setSelectedPatientId(selectedPatientId === patient.id ? null : patient.id);
-                                                if (selectedPatientId !== patient.id) {
-                                                    setUpdateEmail(patient.email);
-                                                    setUpdatePhone(patient.phone);
-                                                } else {
-                                                    setUpdateEmail("");
-                                                    setUpdatePhone("");
-                                                }
-                                            }}
-                                        />
-                                        <Button
-                                            value="Book appoinment"
-                                            onClick={() => navigate('/appointmentbooking', { state: { patientId: patient.id, patientFName: patient.firstName, patientLName: patient.lastName, patientphone: patient.phone, } })}
-
-                                        />
-                                    </>
-                                    )}
-                                    {selectedPatientId === patient.id && userSelector.admin && (
-                                        <div style={{ marginTop: "20px" }}>
-                                            <h3>Update Contact Information</h3>
-                                            <CustomForm>
-                                                <TextField
-                                                    label="Email"
-                                                    value={updateEmail}
-                                                    onChange={(e) => setUpdateEmail(e.target.value)}
-                                                    fullWidth
-                                                    margin="normal"
-                                                />
-                                                <TextField
-                                                    label="Phone"
-                                                    value={updatePhone}
-                                                    onChange={(e) => setUpdatePhone(e.target.value)}
-                                                    fullWidth
-                                                    margin="normal"
-                                                />
-                                                <Button value="Update" onClick={updateContact} />
-                                            </CustomForm>
+                            <Grid item xs={12} sm={6} md={6}lg={4} key={patient.id} >
+                                <Paper className="bg-white shadow-lg rounded-lg p-4" elevation={3}>
+                                    <div className="flex items-start">
+                                        {patient.imageUrl && (
+                                            <img
+                                                src={patient.imageUrl}
+                                                alt={`${patient.firstName}'s profile`}
+                                                className="w-16 h-16 rounded-full mr-4"
+                                            />
+                                        )}
+                                        <div className="flex-1 ml-4">
+                                            <Typography variant="h6" className="text-lg font-semibold text-gray-700 mb-2">
+                                            {capitalizeFirstLetter(patient.firstName.split(" ").slice(-1)[0])} {patient.lastName}
+                                            </Typography>
+                                            <Typography className="text-gray-700 text-xl font-semibold mb-2">
+                                                    ID:{patient.id}
+                                                </Typography>
+                                            <Typography variant="body1" className="text-gray-700 mb-2">
+                                                 {patient.email}
+                                            </Typography>
+                                            <Typography variant="body1" className="text-gray-700 mb-3">
+                                                Ph No: {patient.phone}
+                                            </Typography>
+                                            {userSelector.admin && (
+                                                     <Box className="flex  mt-4 space-x-4">
+                                                     <Button
+                                                         variant="outlined"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                        
+                                                     >
+                                                        Edit
+                                                     </Button>
+                                                     <Button
+                                                         variant="contained"
+                                                         color="primary"
+                                                         onClick={() => navigate('/appointmentbooking', { state: { patientId: patient.id, patientFName: patient.firstName, patientLName: patient.lastName, patientphone: patient.phone } })}
+                                                     >
+                                                        Book Appointment
+                                                     </Button>
+                                                 </Box>
+                                                )}
+                                                 {userSelector.doctor && (
+                                                     <Box className="flex  mt-4 space-x-4">
+                                                     <Button
+                                                         variant="outlined"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                        
+                                                     >
+                                                        Edit
+                                                     </Button>
+                                                     <Button
+                                                         variant="contained"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                     >
+                                                         Add Medical Record
+                                                     </Button>
+                                                 </Box>
+                                                )}
+                                            {selectedPatientId === patient.id && userSelector.admin && (
+                                                <div className="mt-4">
+                                                    <h3 className="text-lg font-semibold mb-2">Update Contact Information</h3>
+                                                    <CustomForm>
+                                                        <TextField
+                                                            label="Email"
+                                                            value={updateEmail}
+                                                            onChange={(e) => setUpdateEmail(e.target.value)}
+                                                            fullWidth
+                                                            margin="normal"
+                                                            className="mb-2"
+                                                        />
+                                                        <TextField
+                                                            label="Phone"
+                                                            value={updatePhone}
+                                                            onChange={(e) => setUpdatePhone(e.target.value)}
+                                                            fullWidth
+                                                            margin="normal"
+                                                            className="mb-2"
+                                                        />
+                                                        <Button value="Update" onClick={updateContact} className="bg-indigo-500 text-white hover:bg-indigo-600 rounded px-4 py-2">
+                                                            Update
+                                                        </Button>
+                                                    </CustomForm>
+                                                </div>
+                                            )}
+                                            {selectedPatientId === patient.id && userSelector.doctor && (
+                                                <div className="mt-4">
+                                                    <h3 className="text-lg font-semibold mb-2">Add Medical Record</h3>
+                                                    <CustomForm>
+                                                        <TextField
+                                                            label="Medical Record"
+                                                            value={medicalRecord}
+                                                            onChange={(e) => setMedicalRecord(e.target.value)}
+                                                            fullWidth
+                                                            margin="normal"
+                                                            className="mb-2"
+                                                        />
+                                                        <Button value="Add Record" onClick={submitMedicalRecord} className="bg-blue-600 text-white hover:bg-blue-700 rounded px-4 py-2">
+                                                            Add Record
+                                                        </Button>
+                                                    </CustomForm>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                    {selectedPatientId === patient.id && userSelector.doctor && (
-                                        <div style={{ marginTop: "20px" }}>
-                                            <h3>Add Medical Record</h3>
-                                            <CustomForm>
-                                                <TextField
-                                                    label="Medical Record"
-                                                    value={medicalRecord}
-                                                    onChange={(e) => setMedicalRecord(e.target.value)}
-                                                    fullWidth
-                                                    margin="normal"
-                                                />
-                                                <Button value="Add Record" onClick={submitMedicalRecord} />
-                                            </CustomForm>
-                                        </div>
-                                    )}
+                                    </div>
+                                    {/* {userSelector.admin && (
+                                                     <Box className="flex justify-center mt-4 space-x-4">
+                                                     <Button
+                                                         variant="outlined"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                         className="mr-2"
+                                                     >
+                                                        Edit
+                                                     </Button>
+                                                     <Button
+                                                         variant="contained"
+                                                         color="primary"
+                                                         onClick={() => navigate('/appointmentbooking', { state: { patientId: patient.id, patientFName: patient.firstName, patientLName: patient.lastName, patientphone: patient.phone } })}
+                                                     >
+                                                        Book Appointment
+                                                     </Button>
+                                                 </Box>
+                                                )}
+                                                 {userSelector.doctor && (
+                                                     <Box className="flex justify-center mt-4 space-x-4">
+                                                     <Button
+                                                         variant="outlined"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                         className="mr-2"
+                                                     >
+                                                        Edit
+                                                     </Button>
+                                                     <Button
+                                                         variant="contained"
+                                                         color="primary"
+                                                         onClick={() => navigate(`/patient-profile/${patient.id}`)}
+                                                     >
+                                                         Add Medical Record
+                                                     </Button>
+                                                 </Box>
+                                                )} */}
                                 </Paper>
                             </Grid>
+
+
                         ))}
                     </Grid>
                 )}
-               
-
                 <ToastContainer />
             </div>
-        </>
+        </Box></>
     );
-}
+};
+
 export default SearchPatient;

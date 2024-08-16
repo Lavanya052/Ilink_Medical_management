@@ -1,0 +1,390 @@
+// import React, { useEffect, useState } from 'react';
+// import Select from 'react-select';
+// import { toast, ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import { makeGETrequest } from "../../utils/api";
+// import { useSelector } from 'react-redux';
+
+
+// const DateSelection = ({
+//   selectedDay,
+//   handleDayChange,
+//   selectedMonth,
+//   handleMonthChange,
+//   selectedYear,
+//   handleYearChange
+// }) => {
+//   // Options for days, months, and years
+//   const dayOptions = [...Array(31)].map((_, index) => ({ value: index + 1, label: index + 1 }));
+//   const monthOptions = [...Array(12)].map((_, index) => ({
+//     value: index + 1,
+//     label: new Date(2000, index, 1).toLocaleString('default', { month: 'long' })
+//   }));
+//   const yearOptions = [...Array(21)].map((_, index) => ({ value: index + 2020, label: index + 2020 }));
+
+//   return (
+//     <div className="mb-4">
+//       <label className="block text-sm font-medium text-gray-700 mb-1">Select Date:</label>
+//       <div className="flex items-center gap-2">
+//         <Select
+//           value={selectedDay}
+//           onChange={handleDayChange}
+//           options={dayOptions}
+//           className="w-20"
+//           placeholder="Day"
+//           menuPortalTarget={document.body}
+//           menuPosition={'fixed'}
+//           menuPlacement={'auto'}
+//         />
+//         <Select
+//           value={selectedMonth}
+//           onChange={handleMonthChange}
+//           options={monthOptions}
+//           className="w-28"
+//           placeholder="Month"
+//           menuPortalTarget={document.body}
+//           menuPosition={'fixed'}
+//           menuPlacement={'auto'}
+//         />
+//         <Select
+//           value={selectedYear}
+//           onChange={handleYearChange}
+//           options={yearOptions}
+//           className="w-24"
+//           placeholder="Year"
+//           menuPortalTarget={document.body}
+//           menuPosition={'fixed'}
+//           menuPlacement={'auto'}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// const AppointmentsTable = ({ appointments, userRole }) => {
+//   const sortedAppointments = [];
+
+//   appointments?.doctors?.forEach(doctor => {
+//     doctor.appointments.forEach(appointment => {
+//       sortedAppointments.push({
+//         ...appointment,
+//         doctorId: doctor.doctorId,
+//         doctorName: doctor.doctorName
+//       });
+//     });
+//   });
+//   // console.log(appointments)
+
+//   sortedAppointments.sort((a, b) => new Date(`1970-01-01T${a.time}:00Z`) - new Date(`1970-01-01T${b.time}:00Z`));
+  
+//   const getStatusClass = (status) => {
+//     switch (status) {
+//       case 'pending':
+//         return ' text-yellow-500';
+//       case 'scheduled':
+//         return ' text-blue-700';
+//       case 'completed':
+//         return 'text-green-800';
+//       default:
+//         return '';
+//     }
+//   };
+
+//   return (
+//     <div className="overflow-x-auto">
+//       {sortedAppointments.length > 0 ? (
+//         <table className="min-w-full divide-y divide-gray-200">
+//           <thead className="bg-gray-50">
+//             <tr>
+//               {userRole === 'admin' && (
+//                 <>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor Name</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Status</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor Status</th>
+//                 </>
+//               )}
+//               {userRole === 'doctors' && (
+//                 <>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accept</th>
+//                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject</th>
+//                 </>
+//               )}
+//             </tr>
+//           </thead>
+//           <tbody className="bg-white divide-y divide-gray-200 text-left">
+//             {sortedAppointments.map((appointment, index) => (
+//               <tr key={index}>
+//                 <td className="px-6 py-4 whitespace-nowrap">{appointment.time}</td>
+//                 {userRole === 'admin' && (
+//                   <>
+//                     <td className="px-6 py-4 whitespace-nowrap">{appointment.doctorName}</td>
+//                     <td className="px-6 py-4 whitespace-nowrap">{appointment.patientName}</td>
+//                     <td className={`px-6 py-4 whitespace-nowrap ${getStatusClass(appointment.patientStatus)}`}>{appointment.patientStatus}</td>
+//                     <td className={`px-6 py-4 whitespace-nowrap ${getStatusClass(appointment.doctorStatus)}`}>{appointment.doctorStatus}</td>
+//                   </>
+//                 )}
+//                 {userRole === 'doctors' && (
+//                   <>
+//                     <td className="px-6 py-4 whitespace-nowrap">{appointment.patientName}</td>
+//                     <td className="px-6 py-4 whitespace-nowrap">
+//                       <button className="text-green-600 hover:text-green-900">Accept</button>
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap">
+//                       <button className="text-red-600 hover:text-red-900">Reject</button>
+//                     </td>
+//                   </>
+//                 )}
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       ) : (
+//         <div className="text-center py-4 text-gray-500 text-xl">No appointments</div>
+//       )}
+//     </div>
+//   );
+// };
+
+// // Main Component
+// const RecentAppointment = () => {
+//   const today = new Date();
+//   const [selectedDay, setSelectedDay] = useState({ value: today.getDate(), label: today.getDate() });
+//   const [selectedMonth, setSelectedMonth] = useState({
+//     value: today.getMonth() + 1,
+//     label: new Date(today.getFullYear(), today.getMonth(), 1).toLocaleString('default', { month: 'long' })
+//   });
+//   const [selectedYear, setSelectedYear] = useState({ value: today.getFullYear(), label: today.getFullYear() });
+//   const [appointments, setAppointments] = useState([]);
+//   const user = useSelector((state) => state.user);
+
+//   const handleDayChange = (selectedOption) => setSelectedDay(selectedOption);
+//   const handleMonthChange = (selectedOption) => setSelectedMonth(selectedOption);
+//   const handleYearChange = (selectedOption) => setSelectedYear(selectedOption);
+
+//   const fetchAppointments = async () => {
+//     if (!selectedDay || !selectedMonth || !selectedYear) {
+//       toast.error("Select day, month, and year");
+//       return;
+//     }
+
+//     const selectedDate = `${selectedYear.value}-${String(selectedMonth.value).padStart(2, '0')}-${String(selectedDay.value).padStart(2, '0')}`;
+//     try {
+//       const res = await makeGETrequest(`http://localhost:5000/appointments/getappointments?date=${selectedDate}`);
+//       setAppointments(res.appointments);
+//     } catch (error) {
+//       console.error('Error fetching appointments:', error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchAppointments();
+//   }, [selectedDay, selectedMonth, selectedYear]);
+
+//   return (
+//     <div className="bg-white rounded-xl p-5 shadow-md flex-1">
+    
+//       <DateSelection
+//         selectedDay={selectedDay}
+//         handleDayChange={handleDayChange}
+//         selectedMonth={selectedMonth}
+//         handleMonthChange={handleMonthChange}
+//         selectedYear={selectedYear}
+//         handleYearChange={handleYearChange}
+//       />
+//       <AppointmentsTable appointments={appointments} userRole={localStorage.getItem("person")} />
+//       <ToastContainer />
+//     </div>
+//   );
+// };
+
+// export default RecentAppointment;
+
+
+//   //  getDoctorAppointments:async (req, res) => {
+//   //   const { date, doctorId } = req.query;
+
+//   //   try {
+//   //     if (!date) {
+//   //       return returnStatus(res, 400, true, 'Date is required');
+//   //     }
+  
+//   //     if (!doctorId) {
+//   //       return returnStatus(res, 400, true, 'Doctor ID is required');
+//   //     }
+  
+//   //     const formattedDate = moment(date).format('YYYY-MM-DD');
+  
+//   //     const db = await getDatabase();
+//   //     const appointmentsDocument = await db.collection("appointments").findOne(
+//   //       { date: formattedDate, "doctors.doctorId": doctorId },
+//   //       { projection: { _id: 0, "doctors.$": 1 } }
+//   //     );
+  
+//   //     if (!appointmentsDocument || appointmentsDocument.doctors.length === 0) {
+//   //       return returnStatus(res, 404, true, 'No appointments found for the given date and doctor');
+//   //     }
+  
+//   //     const doctorAppointments = appointmentsDocument.doctors[0].appointments;
+  
+//   //     return returnStatus(res, 200, false, 'Appointments found', { appointments: doctorAppointments });
+//   //   } catch (error) {
+//   //     console.error(error);
+//   //     return returnStatus(res, 500, true, 'Failed to fetch appointments');
+//   //   }
+//   // },
+
+
+
+
+//   import React, { useState, useEffect } from 'react';
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css';
+// import { format } from 'date-fns';
+// import { makeGETrequest } from '../../utils/api';
+// import { useSelector } from 'react-redux';
+
+// const AppointmentsForToday = ({ userRole }) => {
+//   const [appointments, setAppointments] = useState([]);
+//   const [selectedDate, setSelectedDate] = useState(new Date());
+//   const [loading, setLoading] = useState(false);
+//   const user = useSelector((state) => state.user);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 2;
+
+//   useEffect(() => {
+//     const fetchAppointments = async (date) => {
+//       setLoading(true);
+//       const formattedDate = format(date, 'yyyy-MM-dd');
+
+//       try {
+//         const res = await makeGETrequest(`http://localhost:5000/appointments/getdoctorappointments?date=${formattedDate}&doctorId=${user.id}`);
+//         console.log(res);
+//         setAppointments(res.appointments);
+//       } catch (error) {
+//         console.error("Failed to fetch appointments:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchAppointments(selectedDate);
+//   }, [selectedDate, user.id]);
+
+//   const getSortedAppointments = () => {
+//     const sortedAppointments = [];
+
+//     appointments?.appointments?.forEach(appointment => {
+//       if (appointment.doctorStatus === 'pending') {
+//         sortedAppointments.push({
+//           ...appointment,
+//           doctorId: appointments.doctorId,
+//           doctorName: appointments.doctorName
+//         });
+//       }
+//     });
+
+//     return sortedAppointments.sort((a, b) => new Date(`1970-01-01T${a.time}:00Z`) - new Date(`1970-01-01T${b.time}:00Z`));
+//   };
+
+//   const handleAccept = async (appointment) => {
+//     await fetch(`/api/appointments/${appointment.patientId}/accept`, { method: 'POST' });
+//     setAppointments(prevAppointments =>
+//       prevAppointments.map(app =>
+//         app.patientId === appointment.patientId ? { ...app, doctorStatus: 'accepted' } : app
+//       )
+//     );
+//   };
+
+//   const handleReject = async (appointment) => {
+//     await fetch(`/api/appointments/${appointment.patientId}/reject`, { method: 'POST' });
+//     setAppointments(prevAppointments =>
+//       prevAppointments.map(app =>
+//         app.patientId === appointment.patientId ? { ...app, doctorStatus: 'rejected' } : app
+//       )
+//     );
+//   };
+
+//   const sortedAppointments = getSortedAppointments();
+//   const pendingAppointments = sortedAppointments.filter(app => app.doctorStatus === 'pending');
+
+//   const indexOfLastAppointment = currentPage * itemsPerPage;
+//   const indexOfFirstAppointment = indexOfLastAppointment - itemsPerPage;
+//   const currentAppointments = pendingAppointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
+//   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <div className="mb-4">
+//         <DatePicker
+//           selected={selectedDate}
+//           onChange={(date) => setSelectedDate(date)}
+//           dateFormat="yyyy-MM-dd"
+//           className="border border-gray-300 rounded-lg p-2"
+//         />
+//          {pendingAppointments.length > itemsPerPage && (
+//             <div className="flex justify-center mt-4">
+//               <button
+//                 onClick={() => paginate(currentPage - 1)}
+//                 disabled={currentPage === 1}
+//                 className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-l"
+//               >
+//                 Previous
+//               </button>
+//               <button
+//                 onClick={() => paginate(currentPage + 1)}
+//                 disabled={currentPage === Math.ceil(pendingAppointments.length / itemsPerPage)}
+//                 className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-r"
+//               >
+//                 Next
+//               </button>
+//             </div>
+//           )}
+//       </div>
+//       {loading ? (
+//         <div className="text-center py-4 text-gray-500 text-xl">Loading...</div>
+//       ) : (
+//         <>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+//             {currentAppointments.length > 0 ? (
+//               currentAppointments.map((appointment, index) => (
+//                 <div key={index} className="max-w-sm rounded overflow-hidden shadow-lg bg-white p-4">
+//                   <div className="mb-4">
+//                     <div className="font-bold text-xl mb-2">{appointment.time}</div>
+//                     <p className="text-gray-700 text-base">Patient: {appointment.patientName}</p>
+//                     <p className="text-gray-700 text-base">Phone: {appointment.phoneNumber}</p>
+//                   </div>
+//                   <div className="flex justify-between">
+//                     <>
+//                       <button
+//                         onClick={() => handleAccept(appointment)}
+//                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+//                       >
+//                         Accept
+//                       </button>
+//                       <button
+//                         onClick={() => handleReject(appointment)}
+//                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+//                       >
+//                         Reject
+//                       </button>
+//                     </>
+//                   </div>
+//                 </div>
+//               ))
+//             ) : (
+//               <div className="col-span-full text-center py-4 text-gray-500 text-xl">No pending appointments for this date</div>
+//             )}
+//           </div>
+         
+//         </>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default AppointmentsForToday;

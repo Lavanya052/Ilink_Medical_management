@@ -82,6 +82,8 @@ router.post('/editmedicalrecord', patientsController.editMedicalRecord);
 // Route for deleting a medical record from a patient
 router.post('/deletemedicalrecord', patientsController.deleteMedicalRecord);
 
+router.get('/getpatientDetails',verifyToken, patientsController.getPatientDetails);
+
 router.use((err, req, res, next) => {
     if (req.uploadedImageFilePath) { 
       fs.unlink(req.uploadedImageFilePath, (err) => {

@@ -132,6 +132,7 @@ const usersController = {
                     admin: true,
                     email: admin.email,
                     id:admin.id,
+                    person:"admin"
                 });
             }
     
@@ -157,6 +158,7 @@ const usersController = {
                     username: doctor.username,
                     firstName:doctor.firstName,
                     lastName:doctor.lastName,
+                    person:"doctors"
                 });
             }
     

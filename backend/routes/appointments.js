@@ -17,9 +17,21 @@ const {
 
 
 router.get('/timeslots',appointmentController.getDoctorAvailability);
-// Assuming you have a route set up like this in your Express app
+
 router.post('/bookappointment', verifyToken, appointmentController.bookAppointment);
-router.get('/getappointments',appointmentController.getAppointments)
+
+router.get('/getappointments',appointmentController.getAppointments);
+
+router.get('/getdoctorappointments',appointmentController.getDoctorAppointments);
+
+router.get('/pending-appointments',appointmentController.getPendingDoctorAppointments);
+
+router.post('/doctorstatus',verifyToken,appointmentController.doctorStatus)
+
+router.get('/allappointments',verifyToken,appointmentController.getAllAppointments)
+
+router.get('/alldocappointments',verifyToken,appointmentController.getAllDoctorAppointments)
+
 router.use((err, req, res, next) => {
     console.log("from appoinment router middleware:", err.message);
 

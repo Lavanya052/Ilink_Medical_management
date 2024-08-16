@@ -39,8 +39,8 @@ const Sidebar = () => {
   const docMenus = [
     { title: "Dashboard", icon: <MdDashboardCustomize size={24} color="black" />, link: "/doctorpanel" },
     { title: "Report", icon: <TbReportMedical size={24} color="black" />, link: "/report" },
-    { title: "My Patients", icon: <MdPerson size={24} color="black" />, link: "/patients" },
-    { title: "Appointments", icon: <RiCalendarScheduleLine size={24} color="black" />, link: "/appointments" },
+    { title: "My Patients", icon: <MdPerson size={24} color="black" />, link: "/mypatients" },
+    { title: "Appointments", icon: <RiCalendarScheduleLine size={24} color="black" />, link: "/doctorappointments" },
   ];
 
   const adminMenus = [

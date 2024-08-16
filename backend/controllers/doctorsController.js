@@ -350,7 +350,7 @@ const doctorsController = {
                 // Extract availability from the dates array
                 const availability = availabilityData.dates.flatMap(dateEntry => dateEntry.availability);
 
-                console.log(availability)
+                // console.log(availability)
                 return returnStatus(res, 200, false, "Availability Found", { availability });
             } else {
                 return returnStatus(res, 404, true, "Availability not found for doctor");

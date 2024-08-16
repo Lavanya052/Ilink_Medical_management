@@ -90,7 +90,7 @@ const AppointmentForm = () => {
       if (res.status === 201) {
         toast.success(res.message);
         setTimeout(() => {
-          navigate("/adminpanel");
+          navigate("/searchPatient");
         }, 2000);
       } else {
         toast.error(res.message);

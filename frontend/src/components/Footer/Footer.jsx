@@ -37,7 +37,7 @@ const Footer = () => {
                     </div>
                     
                 </div> */}
-                <div> &copy; {new Date().getFullYear()} Healify - All Rights Reserved | <a href="/privacy-policy">Privacy Policy</a></div>
+                <div> &copy; {new Date().getFullYear()} Healthcare - All Rights Reserved | <a href="/privacy-policy">Privacy Policy</a></div>
             </footer>
 
         </>
