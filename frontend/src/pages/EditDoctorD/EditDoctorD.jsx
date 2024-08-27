@@ -8,55 +8,62 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 
-const EditPatientD = () => {
+const EditDoctorD = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Reference to the file input
+    const fileInputRef = useRef(null);
     const userSelector = useSelector((state) => state.user);
 
-    // Extract patientId from location state or default to empty string
-    const { patientId } = location.state || { patientId: '' };
+    const { doctorId } = location.state || { doctorId: '' };
 
-    // State to hold form data
     const [formData, setFormData] = useState({
         id: '',
+        email: '',
+        username: '',
+        phone: '',
+        emergencyPhone: '',
         firstName: '',
         lastName: '',
-        email: '',
-        phone: '',
         address: '',
-        birthday: '',
+        speciality: '',
         gender: '',
         imageUrl: '',
-        imageFile: null // For handling new image uploads
+        imageFile: null
     });
 
+    const specialtyOptions = [
+        { value: "cardiology", label: "Cardiology" },
+        { value: "neurology", label: "Neurology" },
+        { value: "dermatology", label: "Dermatology" },
+        { value: "orthopedics", label: "Orthopedics" },
+    ];
+
     useEffect(() => {
-        const fetchPatientData = async () => {
+        const fetchDoctorData = async () => {
             try {
                 const res = await makeGETrequest(
-                    `http://localhost:5000/patients/getpatientDetails?id=${patientId}`,
+                    `http://localhost:5000/doctors/getdoctorDetails?id=${doctorId}`,
                     localStorage.getItem("token")
                 );
-                if (res.patient) {
-                    const patientData = {
-                        ...res.patient,
-                        imageUrl: res.patient.image
-                            ? `data:${res.patient.image.contentType};base64,${res.patient.image.data}`
+                if (res.doctor) {
+                    const doctorData = {
+                        ...res.doctor,
+                        imageUrl: res.doctor.image
+                            ? `data:${res.doctor.image.contentType};base64,${res.doctor.image.data}`
                             : ''
                     };
-                    setFormData(patientData);
+                    setFormData(doctorData);
                 }
             } catch (error) {
-                console.error('Error fetching patient data', error);
-                toast.error('Failed to fetch patient details.');
+                console.error('Error fetching doctor data', error);
+                toast.error('Failed to fetch doctor details.');
             }
         };
 
-        if (patientId) {
-            fetchPatientData();
+        if (doctorId) {
+            fetchDoctorData();
         }
-    }, [patientId, location]); // Add location as a dependency to trigger re-fetching
+    }, [doctorId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -91,21 +98,22 @@ const EditPatientD = () => {
             formPayload.append("file", formData.imageFile);
         }
 
-        // Append form fields
         formPayload.append("data", JSON.stringify({
-            id: patientId,
+            id: doctorId,
             email: formData.email,
+            username: formData.username,
             phone: formData.phone,
+            emergencyPhone: formData.emergencyPhone,
             firstName: formData.firstName,
             lastName: formData.lastName,
             address: formData.address,
-            gender: formData.gender,
-            birthday: formData.birthday,
+            speciality: formData.speciality, // Ensure the updated specialty is included
+            gender: formData.gender
         }));
 
         try {
             const res = await makePOSTreqForm(
-                "http://localhost:5000/patients/editpatient",
+                "http://localhost:5000/doctors/editdoctor",
                 formPayload,
                 localStorage.getItem("token")
             );
@@ -113,19 +121,16 @@ const EditPatientD = () => {
             if (res.status === 201) {
                 toast.success(res.message);
                 setTimeout(() => {
-                    if(userSelector.admin)
-                        navigate("/searchpatient");
-                    if(userSelector.doctor)
-                        navigate("/mypatients")
+                    navigate("/searchdoctor");
                 }, 2000);
             } else {
                 toast.error(res.message);
                 setTimeout(() => {
-                    navigate("/editpatientdetails", { state: { patientId: patientId } });
+                    navigate("/editdoctordetails", { state: { doctorId: doctorId } });
                 }, 2000);
             }
         } catch (error) {
-            console.error('Error updating patient details', error);
+            console.error('Error updating doctor details', error);
             toast.error('An error occurred. Please try again.');
         }
     };
@@ -150,18 +155,9 @@ const EditPatientD = () => {
                         &gt;
                     </li>
                     <li className="flex text-lg items-center">
-                        {userSelector.admin && (
-                            <Link to="/searchpatient" className="text-blue-600 hover:text-blue-800">
-                            Search Patient
+                        <Link to="/searchdoctor" className="text-blue-600 hover:text-blue-800">
+                            Search Doctor
                         </Link>
-                        )
-                        }
-                        {userSelector.doctor && (
-                            <Link to="/mypatients" className="text-blue-600 hover:text-blue-800">
-                            My Patient
-                        </Link>
-                        )
-                        }
                     </li>
                     <li className="flex text-lg items-center mx-2 text-gray-500">
                         &gt;
@@ -169,8 +165,8 @@ const EditPatientD = () => {
                     <li className="flex text-lg items-center">
                         <Link
                             to={{
-                                pathname: '/editpatientdetails',
-                                state: { patientId: patientId }
+                                pathname: '/editdoctor',
+                                state: { doctorId: doctorId }
                             }}
                             className="text-blue-600 hover:text-blue-800"
                         >
@@ -183,22 +179,22 @@ const EditPatientD = () => {
                 <div className="md:w-1/3 hidden lg:flex flex-col items-center justify-center">
                     <img src="register.jpg" alt="register" className="w-45 h-45 object-cover" />
                 </div>
-                <div className="lg:w-2/3 w-full bg-white shadow-md rounded-xl p-3 max-w-4xl mx-auto mt-3 mr-5">
-                    <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">Edit Patient Details</h2>
+                <div className="lg:w-2/3 w-full bg-white shadow-md rounded-xl p-6 max-w-4xl mx-auto mt-1 mr-5">
+                    <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">Edit Doctor Details</h2>
                     <form onSubmit={handleSubmit} className="grid grid-cols-2">
                         <div className="ml-5 mr-5">
                             <CustomForm.Id
-                                value={patientId}
-                                placeholder="Patient Id"
+                                value={doctorId}
+                                placeholder="Doctor Id"
                                 name="id"
-                                readOnly // Make ID read-only as it's not editable
+                                readOnly
                             />
                         </div>
                         <div className="ml-5 mr-5">
                             {formData.imageUrl && (
                                 <img
                                     src={formData.imageUrl}
-                                    alt="Patient"
+                                    alt="Doctor"
                                     className="w-20 h-20 cursor-pointer border border-gray-400 rounded-xl mx-auto"
                                     onClick={triggerFileInput}
                                 />
@@ -236,6 +232,15 @@ const EditPatientD = () => {
                             />
                         </div>
                         <div className="ml-5 mr-5">
+                            <CustomForm.Options
+                                value={formData.speciality}    // Bind to the form data state
+                                onChange={handleChange}        // Handle state update
+                                Options={specialtyOptions}    // Options for the dropdown
+                                placeholder="Speciality"
+                                name="speciality"              // This should match the state property
+                            />
+                        </div>
+                        <div className="ml-5 mr-5">
                             <CustomForm.Phone
                                 value={formData.phone}
                                 onChange={handleChange}
@@ -243,6 +248,15 @@ const EditPatientD = () => {
                                 name="phone"
                             />
                         </div>
+                        <div className="ml-5 mr-5">
+                            <CustomForm.Phone
+                                value={formData.emergencyPhone}
+                                onChange={handleChange}
+                                placeholder="Emergency No"
+                                name="phone2"
+                            />
+                        </div>
+
                         <div className="ml-5 mr-5">
                             <CustomForm.Address
                                 value={formData.address}
@@ -252,16 +266,10 @@ const EditPatientD = () => {
                             />
                         </div>
                         <div className="ml-5 mr-5">
-                            <CustomForm.Birthday
-                                value={formData.birthday}
-                                onChange={handleChange}
-                                name="birthday"
-                            />
-                        </div>
-                        <div className="ml-5 mr-5">
                             <CustomForm.Gender
                                 value={formData.gender}
                                 onChange={handleChange}
+                                placeholder="Gender"
                                 name="gender"
                             />
                         </div>
@@ -269,11 +277,11 @@ const EditPatientD = () => {
                             <Button value={"Save"} type="submit" />
                         </div>
                     </form>
-                    <ToastContainer />
                 </div>
             </div>
+            <ToastContainer />
         </>
     );
 };
 
-export default EditPatientD;
+export default EditDoctorD;

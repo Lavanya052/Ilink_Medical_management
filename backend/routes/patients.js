@@ -57,21 +57,8 @@ router.post("/registerpatient", verifyToken, (req, res, next) => {
 }
     , checkId, checkEmail, checkAddress, checkPhone, patientsController.registerPatient)
 
-router.get("/searchpatient",
-    patientsController.searchPatient)
+router.get("/searchpatient",patientsController.searchPatient)
 
-router.post("/updatepatient",
-    verifyToken,
-    checkId,
-    checkEmail,
-    checkPhone,
-    patientsController.updateContact)
-
-router.post("/addmedicalrecord",
-    verifyToken,
-    checkId,
-    checkMedicalRecords,
-    patientsController.addMedicalRecord);
 
 router.get("/allpatients", patientsController.getAllPatients);
 router.get("/fetchPatients/:patientName", patientsController.fetchPatients)
@@ -83,6 +70,76 @@ router.post('/editmedicalrecord', patientsController.editMedicalRecord);
 router.post('/deletemedicalrecord', patientsController.deleteMedicalRecord);
 
 router.get('/getpatientDetails',verifyToken, patientsController.getPatientDetails);
+
+router.get('/mypatients',verifyToken, patientsController.myPatients);
+
+router.post("/editpatient", verifyToken, (req, res, next) => {
+    
+    const uploadDir = path.join(__dirname, "..", "uploads");
+
+    const form = new formidable.IncomingForm({
+        uploadDir: uploadDir,
+        maxFileSize: 1 * 1024 * 1024 // Set max file size to 1MB
+    });
+
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
+            return returnStatus(res, 400, true, "Error uploading file, file limit is 1MB");
+        }
+        // console.log(fields.data)
+        const formData = JSON.parse(fields.data);
+
+        if (formData) {
+            const { id, email, phone, firstName, lastName, address, birthday, gender } = formData;
+            req.body.id = id;
+            req.body.phone = phone;
+            req.body.email = email;
+            req.body.firstName = firstName;
+            req.body.lastName = lastName;
+            req.body.address = address;
+            req.body.birthday = birthday;
+            req.body.gender = gender;
+
+            if (files.file) {
+                req.uploadedImageFilePath = files.file[0].filepath;
+                req.uploadedImageName = files.file[0].originalFilename;
+                req.uploadedImageMimetype = files.file[0].mimetype;
+            }
+
+            next();
+        } else {
+            return returnStatus(res, 400, true, "Invalid form data");
+        }
+    });
+}, checkId, checkEmail, checkPhone, patientsController.editPatient);
+
+router.post("/addmedicalrecord",verifyToken,(req,res,next)=>{
+    // console.log("in addmedical record")
+
+    const uploadDir = path.join(__dirname, "..", "uploads");
+
+    const form = new formidable.IncomingForm({
+        uploadDir: uploadDir,
+        maxFileSize: 1 * 1024 * 1024 // Set max file size to 1MB
+    });
+    
+    form.parse(req, async (err, fields, files) => {
+    
+            const formData = JSON.parse(fields.data);
+    
+            if (formData) {
+                const { id, title, description,doctorId} = formData;
+                req.body.id = id;
+                req.body.description = description;
+                req.body.title = title;
+                req.body.doctorId=doctorId;
+                next();
+            } else {
+                return returnStatus(res, 400, true, "Invalid form data");
+            }
+        });
+    }, checkId, patientsController.addMedicalRecord);
+    
 
 router.use((err, req, res, next) => {
     if (req.uploadedImageFilePath) { 

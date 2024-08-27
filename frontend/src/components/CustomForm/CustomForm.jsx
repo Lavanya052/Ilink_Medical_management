@@ -43,6 +43,7 @@ CustomForm.Email = function EmailField(props) {
                     label={props.placeholder}
                     value={props.value}
                     className="form-control"
+                    name={props.name} 
                     required={true}
                     onChange={props.onChange}
                     fullWidth
@@ -163,19 +164,21 @@ CustomForm.Phone = function PhoneField(props) {
 CustomForm.MedicalRecord = function MedicalRecordField(props) {
     return (
         <TextField
-            type="text"
-            name="medicalrecord"
-            label="Medical Record"
+            type={props.type || "text"} // Default to "text" if no type is provided
+            name={props.name || "medicalrecord"} // Default name if none is provided
+            label={props.placeholder || "Medical Record"} // Allow customizable placeholder
             value={props.value}
             onChange={props.onChange}
-            required={true}
+            required={props.required !== undefined ? props.required : true} // Default required to true
             fullWidth
             margin="normal"
-            multiline
-            rows={10}
+            multiline={props.multiline !== undefined ? props.multiline : true} // Default multiline to true
+            rows={props.rows || 10} // Allow custom rows, default to 10
+            variant={props.variant || "outlined"} // Allow variant customization (outlined is default)
         />
     );
 };
+
 
 // ImageField component
 CustomForm.Image = function ImageField(props) {
@@ -399,29 +402,25 @@ CustomForm.Birthday = function BirthdayField(props) {
         </div>
     );
 };
-
 // Generic InputField component
 CustomForm.Input = function InputField(props) {
     return (
-
         <div className="input-group">
-            <div className="input-group-text">
-
-                <TextField
-                    type="text"
-                    name="input"
-                    label={props.placeholder}
-                    value={props.value}
-                    onChange={props.onChange}
-                    required={true}
-                    fullWidth
-                    margin="normal"
-                />
-
-            </div>
+            <TextField
+                type={props.type || "text"} // Default to "text" if no type is provided
+                name={props.name || "input"} // Default name if none is provided
+                label={props.placeholder}
+                value={props.value}
+                onChange={props.onChange}
+                required={props.required !== undefined ? props.required : true} // Default required to true
+                fullWidth
+                margin="normal"
+                variant={props.variant || "outlined"} // Allow variant customization (outlined is default)
+            />
         </div>
     );
 };
+
 
 // GenderField component
 CustomForm.Gender = function GenderField(props) {
@@ -456,16 +455,43 @@ CustomForm.Gender = function GenderField(props) {
         </div>
     );
 };
+// // SpecialtyField component
+// CustomForm.Options = function SpecialtyField(props) {
+//     return (
+//         <div className="input-group">
+//             <div className="input-group-text">
+               
+
+//                 <TextField
+//                     select
+//                     name="Options"
+//                     label={props.placeholder}
+//                     value={props.value} 
+//                     onChange={props.onChange}
+//                     required={true}
+//                     fullWidth
+//                     margin="normal"
+//                 >
+//                     {props.Options.map((option) => (
+//                         <MenuItem key={option.value} value={option.value}>
+//                             {option.label}
+//                         </MenuItem>
+//                     ))}
+//                 </TextField>
+//             </div>
+//         </div>
+//     );
+// };
+
+
 // SpecialtyField component
 CustomForm.Options = function SpecialtyField(props) {
     return (
         <div className="input-group">
             <div className="input-group-text">
-               
-
                 <TextField
                     select
-                    name="Options"
+                    name={props.name}  // Use the correct name prop
                     label={props.placeholder}
                     value={props.value} 
                     onChange={props.onChange}

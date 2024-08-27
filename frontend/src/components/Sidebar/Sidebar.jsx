@@ -45,8 +45,7 @@ const Sidebar = () => {
 
   const adminMenus = [
     { title: "Dashboard", icon: <MdDashboardCustomize size={24} color="black" />, link: "/adminpanel" },
-    { title: "Doctors", icon: <MdPersonAdd size={24} color="black" />, link: "/registerDoctor" },
-    { title: "Patients", icon: <MdPersonAdd size={24} color="black" />, link: "/registerpatient" },
+    { title: "Register", icon: <MdPersonAdd size={24} color="black" />, link: "/registerDoctor" },
     { title: "Report", icon: <TbReportMedical size={24} color="black" />, link: "/report" },
     { title: "Appointments Booking", icon: <RiCalendarScheduleLine size={24} color="black" />, link: "/appointmentbooking" },
   ];

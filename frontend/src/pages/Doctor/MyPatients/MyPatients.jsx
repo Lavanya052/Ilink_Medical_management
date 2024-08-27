@@ -1,116 +1,87 @@
-import "./SearchDoctor.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { makeGETrequest, makePOSTrequest } from "../../utils/api";
 import { useSelector } from "react-redux";
-import {
-    Grid, TextField, Button, Box, InputAdornment, FormControl, Select, MenuItem, InputLabel, Typography, Paper
-} from "@mui/material";
+import { Grid, TextField, Button, Box, InputAdornment, FormControl, Select, MenuItem, Typography, Paper } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { ToastContainer, toast } from "react-toastify";
+import CustomForm from "../../../components/CustomForm/CustomForm";
+import { makeGETrequest } from "../../../utils/api";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from 'react-router-dom';
-import { FaPlus } from 'react-icons/fa'
 
-const SearchDoctor = () => {
-    const [allDoctors, setAllDoctors] = useState([]);
-    const [filteredDoctors, setFilteredDoctors] = useState([]);
+const MyPatients = () => {
+    const [patients, setPatients] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+    const [filteredPatients, setFilteredPatients] = useState([]);
+    const [selectedPatientId, setSelectedPatientId] = useState(null);
     const [updateEmail, setUpdateEmail] = useState("");
     const [updatePhone, setUpdatePhone] = useState("");
+    const [medicalRecord, setMedicalRecord] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [doctorsPerPage, setDoctorsPerPage] = useState(6);
-    const userSelector = useSelector((state) => state.user);
+    const [patientsPerPage, setPatientsPerPage] = useState(6);
+    const [appointmentId, setAppointmentId] = useState(""); // State for Appointment ID filter
+    const [noPatientsMessage, setNoPatientsMessage] = useState(""); // State for no patients found message
     const navigate = useNavigate();
+    const userSelector = useSelector((state) => state.user);
 
     useEffect(() => {
-        async function fetchAllDoctors() {
+        async function fetchAllPatients() {
             try {
-                const res = await makeGETrequest("http://localhost:5000/doctors/alldoctors");
-                if (res.doctors) {
-                    const doctorsWithImages = res.doctors.map((doctor) => ({
-                        ...doctor,
-                        imageUrl: `data:${doctor.image.contentType};base64,${doctor.image.data}`
+                const res = await makeGETrequest(
+                    `http://localhost:5000/patients/mypatients?doctorId=${userSelector.id}`,
+                    localStorage.getItem("token")
+                );
+    
+                console.log(res); // Inspect the response
+    
+                if (res.status === 200) {
+                    const patientsArray = Array.isArray(res.patients) ? res.patients : []; // Ensure it is an array
+                    const patientWithImages = patientsArray.map(patient => ({
+                        ...patient,
+                        imageUrl: `data:${patient.image.contentType};base64,${patient.image.data}`
                     }));
-                    setAllDoctors(doctorsWithImages);
-                    setFilteredDoctors(doctorsWithImages);
+                    console.log(patientWithImages)
+                    setPatients(patientWithImages);
+                    setFilteredPatients(patientWithImages);
+                    console.log(patients)
                 } else {
-                    toast.error(res.message);
+                    toast.error(res.message || "Failed to fetch patients");
                 }
             } catch (error) {
-                console.error("Error fetching doctors:", error);
-                toast.error("Failed to fetch doctors. Please try again.");
+                console.error("Error fetching patients:", error);
+                toast.error("Failed to fetch patients. Please try again.");
             }
         }
-        fetchAllDoctors();
-    }, []);
-
+    
+        fetchAllPatients();
+    }, [userSelector.id]);
+    
     useEffect(() => {
         if (searchTerm.trim() !== "") {
             submitSearch();
         } else {
-            setFilteredDoctors(allDoctors);
+            setFilteredPatients(patients);
         }
-    }, [searchTerm, allDoctors]);
+    }, [searchTerm, patients]);
 
     const submitSearch = () => {
-        const filtered = allDoctors.filter((doctor) =>
-            doctor.id.toString().includes(searchTerm) ||
-            doctor.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            doctor.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+        // console.log(searchTerm)
+        const filtered = patients.filter((patient) =>
+            patient.id.toString().includes(searchTerm) ||
+            patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            patient.phone.toString().includes(searchTerm)
         );
-        setFilteredDoctors(filtered);
-    };
-
-    const updateContact = async (e, doctorId) => {
-        e.preventDefault();
-        try {
-            if (!/\S+@\S+\.\S+/.test(updateEmail)) {
-                toast.error("Invalid email address");
-                return;
-            }
-            if (!/^[0-9-+]+$/.test(updatePhone)) {
-                toast.error("Invalid phone number");
-                return;
-            }
-            const res = await makePOSTrequest(
-                "http://localhost:5000/doctors/updatedoctor",
-                {
-                    id: doctorId,
-                    email: updateEmail,
-                    phone: updatePhone
-                },
-                localStorage.getItem("token")
-            );
-            if (res.status === 201) {
-                const updatedDoctor = JSON.parse(res.doctor);
-                setAllDoctors((prevDoctors) =>
-                    prevDoctors.map((doc) => (doc.id === doctorId ? updatedDoctor : doc))
-                );
-                setFilteredDoctors((prevFiltered) =>
-                    prevFiltered.map((doc) => (doc.id === doctorId ? updatedDoctor : doc))
-                );
-                setUpdateEmail("");
-                setUpdatePhone("");
-                setSelectedDoctorId(null);
-                toast.success(res.message);
-            } else {
-                toast.error(res.message);
-            }
-        } catch (error) {
-            console.error("Error updating contact:", error);
-            toast.error("Failed to update contact. Please try again.");
-        }
+        setFilteredPatients(filtered);
     };
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
-    const handleDoctorsPerPageChange = (event) => {
-        setDoctorsPerPage(event.target.value);
-        setCurrentPage(1); // Reset to the first page when changing doctors per page
+    const handlePatientsPerPageChange = (event) => {
+        setPatientsPerPage(event.target.value);
+        setCurrentPage(1); // Reset to the first page when changing patients per page
     };
 
     const handlePreviousPage = () => {
@@ -118,56 +89,44 @@ const SearchDoctor = () => {
     };
 
     const handleNextPage = () => {
-        const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
+        const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
-    const indexOfLastDoctor = currentPage * doctorsPerPage;
-    const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
-    const currentDoctors = filteredDoctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
-    const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
+    const indexOfLastPatient = currentPage * patientsPerPage;
+    const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+    const currentPatients = filteredPatients.slice(indexOfFirstPatient, indexOfLastPatient);
+    const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
 
     return (
         <>
-            <nav className="flex py-3 px-5 bg-gray-100 rounded-md w-full items-center justify-between">
+            <nav className="flex py-3 px-5 bg-gray-100 rounded-md w-full">
                 <ol className="list-reset flex text-grey-dark">
                     <li className="flex text-lg items-center">
-                    {userSelector.admin && (
-                            <Link to="/adminpanel" className="text-blue-600 hover:text-blue-800">
-                                Home
-                            </Link>
-                        )}
-                        {userSelector.doctor && (
-                            <Link to="/doctorpanel" className="text-blue-600 hover:text-blue-800">
-                                Home
-                            </Link>
-                        )}
+                        <Link to="/doctorpanel" className="text-blue-600 hover:text-blue-800">
+                            Home
+                        </Link>
                     </li>
                     <li className="flex text-lg items-center mx-2 text-gray-500">
                         &gt;
                     </li>
                     <li className="flex text-lg items-center">
-                        <Link to="/searchdoctor" className="text-blue-600 hover:text-blue-800">
-                            Search Doctor
+                        <Link to="/mypatients" className="text-blue-600 hover:text-blue-800">
+                           My Patient
                         </Link>
                     </li>
                 </ol>
-                {/* <button className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 flex items-center">
-    <FaPlus className="mr-2" />
-    Add Doctor
-  </button> */}
             </nav>
-
-            <Box sx={{ padding: 3 }}>
+            <Box sx={{ padding: 4 }}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={4}>
                         <TextField
                             label="Search"
                             variant="outlined"
                             fullWidth
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search for Doctors"
+                            placeholder="Id/Name/PhNo"
                             onKeyPress={(e) => {
                                 if (e.key === "Enter") {
                                     e.preventDefault(); // Prevent form submission
@@ -189,9 +148,10 @@ const SearchDoctor = () => {
                             }}
                         />
                     </Grid>
+
                     {/* Pagination Controls */}
-                    <Grid item xs={12} sm={4} className="flex justify-center items-center">
-                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Grid item xs={12} sm={4} className="pagination-controls flex justify-center items-center">
+                        <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
                             <Button
                                 onClick={handlePreviousPage}
                                 disabled={currentPage === 1}
@@ -211,18 +171,18 @@ const SearchDoctor = () => {
                             </Button>
                         </Box>
                     </Grid>
-                    {/* Per Page */}
-                    <Grid item xs={12} sm={4} className="flex justify-end items-center">
 
+                    {/* Per Page */}
+                    <Grid item xs={12} sm={4} className="flex justify-end w-full">
                         <Box className="flex items-center justify-end w-full">
                             <Typography variant="body1" component="label" className="px-4">
-                                Doctors Per Page
+                                Patients Per Page
                             </Typography>
                         </Box>
                         <FormControl variant="outlined" className="w-32">
                             <Select
-                                value={doctorsPerPage}
-                                onChange={handleDoctorsPerPageChange}
+                                value={patientsPerPage}
+                                onChange={handlePatientsPerPageChange}
                             >
                                 <MenuItem value={6}>6</MenuItem>
                                 <MenuItem value={12}>12</MenuItem>
@@ -231,61 +191,68 @@ const SearchDoctor = () => {
                         </FormControl>
                     </Grid>
                 </Grid>
+
                 <div className="mt-10">
-                    {searchTerm && filteredDoctors.length > -1 && (
+                    {appointmentId && filteredPatients.length > 0 && (
                         <Typography variant="h6" style={{ margin: "20px 0" }}>
-                            {filteredDoctors.length} {filteredDoctors.length === 1 ? "Doctor" : "Doctors"} Found
+                            {filteredPatients.length} {filteredPatients.length === 1 ? "Patient" : "Patients"} Found
                         </Typography>
                     )}
-                    {currentDoctors.length > 0 && (
-                        <Grid container spacing={3} className="doctors-grid">
-                            {currentDoctors.map((doctor) => (
-                                <Grid item xs={12} sm={6} md={6} lg={4} key={doctor.id}>
+                    {noPatientsMessage && (
+                        <Typography variant="h6" color="error" style={{ margin: "20px 0" }}>
+                            {noPatientsMessage}
+                        </Typography>
+                    )}
+                    {currentPatients.length > 0 && (
+                        <Grid container spacing={3} className="patients-grid">
+                            {currentPatients.map((patient) => (
+                                <Grid item xs={12} sm={6} md={6} lg={4} key={patient.id}>
                                     <Paper className="bg-white shadow-lg rounded-lg p-4" elevation={3}>
                                         <div className="flex items-start">
-                                            {doctor.imageUrl && (
+                                            {patient.imageUrl && (
                                                 <img
-                                                    src={doctor.imageUrl}
-                                                    alt={`${doctor.firstName}'s profile`}
-                                                    className="w-16 h-16 rounded-full md:mr-4"
+                                                    src={patient.imageUrl}
+                                                    alt={`${patient.firstName}'s profile`}
+                                                    className="w-16 h-16 rounded-full mr-4"
                                                 />
                                             )}
                                             <div className="flex-1 ml-4">
                                                 <Typography variant="h6" className="text-lg font-semibold text-gray-700 mb-2">
-                                                    Dr.{capitalizeFirstLetter(doctor.firstName.split(" ").slice(-1)[0])} {doctor.lastName}
+                                                    {capitalizeFirstLetter(patient.firstName.split(" ").slice(-1)[0])} {patient.lastName}
                                                 </Typography>
                                                 <Typography className="text-gray-700 text-xl font-semibold mb-2">
-                                                    ID:{doctor.id}
+                                                    ID: {patient.id}
                                                 </Typography>
                                                 <Typography variant="body1" className="text-gray-700 mb-2">
-                                                    {doctor.email}
+                                                    {patient.email}
                                                 </Typography>
                                                 <Typography variant="body1" className="text-gray-700 mb-3">
-                                                    Ph.No:{doctor.phone}
+                                                    Ph No: {patient.phone}
                                                 </Typography>
-                                                {userSelector.admin && (
-                                                    <Box className="flex  mt-4 space-x-4">
+                                     
+                                                {userSelector.doctor && (
+                                                    <Box className="flex mt-4 space-x-4">
                                                         <Button
                                                             variant="outlined"
                                                             color="primary"
-                                                            onClick={() => navigate(`/editdoctordetails`,{state :{doctorId:doctor.id}})}
-
+                                                            onClick={() => navigate('/editpatientdetails',{state :{patientId:patient.id}})}
+                                                            // onClick={()=>navigate(`/editpatientdetails?${patient.id}`)}
                                                         >
                                                             Edit
                                                         </Button>
                                                         <Button
                                                             variant="contained"
                                                             color="primary"
-                                                            onClick={() => navigate('/addavailability', { state: { doctorId: doctor.id, doctorFName: doctor.firstName, doctorLName: doctor.lastName, imageUrl: doctor.imageUrl } })}
+                                                            onClick={() => navigate(`/addmedicalrecord`,{state :{patientId:patient.id}})}
                                                         >
-                                                            Set Availability
+                                                            Add Medical Record
                                                         </Button>
                                                     </Box>
                                                 )}
-                                                {selectedDoctorId === doctor.id && (
-                                                    <div style={{ marginTop: "20px" }}>
+                                                {selectedPatientId === patient.id && userSelector.admin && (
+                                                    <div className="mt-4">
                                                         <h3 className="text-lg font-semibold mb-2">Update Contact Information</h3>
-                                                        <form>
+                                                        <CustomForm>
                                                             <TextField
                                                                 label="Email"
                                                                 value={updateEmail}
@@ -302,19 +269,32 @@ const SearchDoctor = () => {
                                                                 margin="normal"
                                                                 className="mb-2"
                                                             />
-                                                            <Button
-                                                                value="Update"
-                                                                onClick={(e) => updateContact(e, doctor.id)}
-                                                                className="bg-indigo-500 text-white hover:bg-indigo-600 rounded px-4 py-2"
-                                                            >
+                                                            <Button onClick={updateContact} className="bg-indigo-500 text-white hover:bg-indigo-600 rounded px-4 py-2">
                                                                 Update
                                                             </Button>
-                                                        </form>
+                                                        </CustomForm>
+                                                    </div>
+                                                )}
+                                                {selectedPatientId === patient.id && userSelector.doctor && (
+                                                    <div className="mt-4">
+                                                        <h3 className="text-lg font-semibold mb-2">Add Medical Record</h3>
+                                                        <CustomForm>
+                                                            <TextField
+                                                                label="Medical Record"
+                                                                value={medicalRecord}
+                                                                onChange={(e) => setMedicalRecord(e.target.value)}
+                                                                fullWidth
+                                                                margin="normal"
+                                                                className="mb-2"
+                                                            />
+                                                            <Button onClick={submitMedicalRecord} className="bg-blue-600 text-white hover:bg-blue-700 rounded px-4 py-2">
+                                                                Add Record
+                                                            </Button>
+                                                        </CustomForm>
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
-
                                     </Paper>
                                 </Grid>
                             ))}
@@ -327,4 +307,4 @@ const SearchDoctor = () => {
     );
 };
 
-export default SearchDoctor;
+export default MyPatients;

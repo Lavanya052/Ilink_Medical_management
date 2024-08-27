@@ -73,6 +73,49 @@ router.post("/updatedoctor",verifyToken,checkId,checkEmail,
 )
 
 router.post("/addavailability",verifyToken,doctorsController.addAvailability)
+router.get('/getdoctorDetails',verifyToken, doctorsController.getDoctorDetails);
+
+
+router.post("/editdoctor", verifyToken, (req, res, next) => {
+    
+  const uploadDir = path.join(__dirname, "..", "uploads");
+
+  const form = new formidable.IncomingForm({
+      uploadDir: uploadDir,
+      maxFileSize: 1 * 1024 * 1024 // Set max file size to 1MB
+  });
+
+  form.parse(req, async (err, fields, files) => {
+      if (err) {
+          return returnStatus(res, 400, true, "Error uploading file, file limit is 1MB");
+      }
+      // console.log(fields.data)
+      const formData = JSON.parse(fields.data);
+
+      if (formData) {
+          const { id, email, phone, firstName, lastName, address, speciality, gender } = formData;
+          req.body.id = id;
+          req.body.phone = phone;
+          req.body.email = email;
+          req.body.firstName = firstName;
+          req.body.lastName = lastName;
+          req.body.address = address;
+          req.body.speciality = speciality;
+          req.body.gender = gender;
+
+          if (files.file) {
+              req.uploadedImageFilePath = files.file[0].filepath;
+              req.uploadedImageName = files.file[0].originalFilename;
+              req.uploadedImageMimetype = files.file[0].mimetype;
+          }
+
+          next();
+      } else {
+          return returnStatus(res, 400, true, "Invalid form data");
+      }
+  });
+}, checkId, checkEmail, checkPhone, doctorsController.editDoctor);
+
 
 router.use((err, req, res, next) => {
   if (req.uploadedImageFilePath) { 

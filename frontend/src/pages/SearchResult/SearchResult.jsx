@@ -1,5 +1,6 @@
 import "./SearchResult.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useLocation } from "react-router-dom";
 import { makeGETrequest } from "../../utils/api";
 import { useSelector } from "react-redux";
@@ -17,6 +18,7 @@ const SearchResult = () => {
     const [doctorCount, setDoctorCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [doctorsPerPage] = useState(6);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (searchTerm) {
@@ -124,15 +126,14 @@ const SearchResult = () => {
                                                 </td>
                                                 {userSelector.admin && (
                                                     <td className="py-2 px-4 border">
-                                                        <button
-                                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                                            onClick={() => {
-                                                                setSelectedDoctor(doctor);
-                                                                setShowUpdate(!showUpdate);
-                                                            }}
+                                                        <Button
+                                                            variant="outlined"
+                                                            color="primary"
+                                                            onClick={() => navigate(`/editdoctordetails`,{state :{doctorId:doctor.id}})}
+
                                                         >
-                                                            Update
-                                                        </button>
+                                                            Upadate
+                                                        </Button>
                                                     </td>
                                                 )}
                                             </tr>

@@ -57,7 +57,7 @@ const Signin = () => {
         if (res.status === 200) {
           localStorage.setItem("token", res.token);
           localStorage.setItem("person", res.person);
-          dispatch(login({ username: res.username, person: res.person }));
+          dispatch(login({ username: res.username, person: res.person, id:res.id }));
 
           if (res.person === "doctors" && accountType === "doctor") {
             navigate("/doctorpanel");

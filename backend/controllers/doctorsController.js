@@ -386,6 +386,85 @@ const doctorsController = {
         }
     },
 
+    getDoctorDetails: async (req, res, next) => {
+        try {
+            const { id } = req.query;
+            // console.log(id)
+            const db = await getDatabase();
+
+            // Find the patient by ID
+            const doctor = await db.collection("doctors").findOne({ id: id }, {
+                projection: { _id: 0, password: 0 } // Exclude sensitive fields
+            });
+
+            if (!doctor) {
+                return returnStatus(res, 404, true, "doctor not found");
+            }
+
+            return returnStatus(res, 200, false, "doctor details retrieved successfully", {
+                doctor: doctor,
+            });
+        } catch (err) {
+            console.error(err);
+            return returnStatus(res, 500, true, "Internal server error");
+        } finally {
+            if (client) {
+                await client.close();
+            }
+        }
+    },
+
+
+    editDoctor: async (req, res, next) => {
+        try {
+            const db = await getDatabase();
+            const { id, email, phone, firstName, lastName, address, speciality, gender } = req.body;
+            const updateFields = {};
+
+            if (id) updateFields.id = id;
+            if (email) updateFields.email = email;
+            if (phone) updateFields.phone = phone;
+            if (firstName) updateFields.firstName = firstName;
+            if (lastName) updateFields.lastName = lastName;
+            if (address) updateFields.address = address;
+            if (speciality) updateFields.speciality = speciality;
+            if (gender) updateFields.gender = gender;
+
+            // Handle image update
+            if (req.uploadedImageFilePath) {
+                const imageData = await fs.readFile(req.uploadedImageFilePath);
+                updateFields.image = {
+                    data: Buffer.from(imageData).toString("base64"),
+                    contentType: req.uploadedImageMimetype
+                };
+            }
+
+            // console.log(id)
+            const doctor = await db.collection("doctors").findOneAndUpdate(
+                { id: id },
+                { $set: updateFields },
+                {
+                    projection: { _id: 0, password: 0 }
+                }
+            );
+
+            if (!doctor) {
+                return returnStatus(res, 404, true, "Doctor not found");
+            }
+
+            return returnStatus(res, 201, false, "Doctor info updated successfully");
+        } catch (err) {
+            console.log(err);
+            return returnStatus(res, 500, true, "Internal server error");
+            return next(new Error());
+        } finally {
+            if (client) {
+                await client.close();
+            }
+        }
+    },
+
+
 
 };
 module.exports = doctorsController;

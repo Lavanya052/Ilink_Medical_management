@@ -5,28 +5,30 @@ import App from './App.jsx'
 import Layout from "./Layout"
 import Profile from './components/Profile/Profile'
 import About from './pages/About/About'
-import AdminPanel from './pages/AdminPanel/AdminPanel'
-import DoctorPanel from './pages/DoctorPanel/DoctorPanel'
-import RegisterDoctor from './pages/RegisterDoctor/RegisterDoctor'
-import RegisterPatient from './pages/RegisterPatient/RegisterPatient'
+import AdminPanel from './pages/Admin/AdminPanel/AdminPanel'
+import DoctorPanel from './pages/Doctor/DoctorPanel/DoctorPanel'
+import RegisterDoctor from './pages/Admin/RegisterDoctor/RegisterDoctor'
+import RegisterPatient from './pages/Admin/RegisterPatient/RegisterPatient'
 import SearchDoctor from './pages/SearchDoctor/SearchDoctor'
 import SearchPatient from './pages/SearchPatient/SearchPatient'
 import Signin from './pages/Signin/Signin'
 import Error from "./components/Error/Error"
-import Register from './pages/Register/Register'
-import Search from './pages/Search/Search';
+
 import SearchResult from './pages/SearchResult/SearchResult';
-import AppointmentBooking from "./pages/AppointmentBooking/AppointmentBooking"
+import AppointmentBooking from "./pages/Admin/AppointmentBooking/AppointmentBooking.jsx"
 import { createBrowserRouter,RouterProvider } from 'react-router-dom'
 import {Provider} from "react-redux";
 import { store } from './redux/store'
 import ResetPassword from './pages/ResetPassword/ResetPassword'
-import AddAvailability from './pages/AddAvailability/AddAvailability'
-import DoctorAvailability from './pages/DoctorAvailability/DoctorAvailability'
-import Appointments from './pages/Appointments/Appointments'
-import DoctorAppointments from './pages/DoctorAppointments/DoctorAppointments'
-import MyPatients from './pages/MyPatients/MyPatients'
+import AddAvailability from './pages/Admin/AddAvailability/AddAvailability'
+import DoctorAvailability from './pages/Doctor/DoctorAvailability/DoctorAvailability'
+import Appointments from './pages/Admin/Appointments/Appointments'
+import DoctorAppointments from './pages/Doctor/DoctorAppointments/DoctorAppointments'
+import MyPatients from './pages/Doctor/MyPatients/MyPatients'
 import EditPatientD from './pages/EditPatientD/EditPatientD'
+import EditDoctorD from './pages/EditDoctorD/EditDoctorD'
+import AddMedicalR from './pages/Doctor/AddMedicalR/AddMedicalR'
+
 
 const router =createBrowserRouter([
   {
@@ -62,20 +64,12 @@ const router =createBrowserRouter([
         element: <RegisterDoctor />
       },
       {
-        path: "/register",
-        element: <Register />
-      },
-      {
         path: "/adminpanel",
         element: <AdminPanel />
       },
       {
         path: "/profile",
         element: <Profile />
-      },
-      {
-        path: "/search",
-        element: <Search />
       },
       {
         path: "/search-result",
@@ -117,6 +111,14 @@ const router =createBrowserRouter([
         path:"/editpatientdetails",
         element:<EditPatientD/>
       },
+      {
+        path:"/editdoctordetails",
+        element:<EditDoctorD/>
+      },
+      {
+        path:"/addmedicalrecord",
+        element:<AddMedicalR/>
+      }
     ],
   },
 ]);
